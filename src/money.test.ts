@@ -12,6 +12,9 @@ import {Franc} from "./franc.ts";
 // [ ] hashCode()
 // [ ] To evaluate equality to null
 // [ ] To evaluate equality to other objects
+// [x] To generalize equals method
+// [ ] To generalize times method
+// [ ] To compare Franc and Dollar
 
 Deno.test('multiplication',   () => {
   const five = new Dollar(5);
@@ -24,6 +27,7 @@ Deno.test('equality', () => {
   assertFalse(new Dollar(5).equals(new Dollar(6)))
   assert(new Franc(5).equals(new Franc(5)))
   assertFalse(new Franc(5).equals(new Franc(6)))
+  assertFalse(new Franc(5).equals(new Dollar(5)))
 })
 
 Deno.test('franc multiplication',   () => {
