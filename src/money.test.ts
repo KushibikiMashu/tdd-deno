@@ -1,5 +1,6 @@
 import { assertEquals, assert, assertFalse } from "https://deno.land/std@0.149.0/testing/asserts.ts";
-import {Dollar} from "./money.ts";
+import {Dollar} from "./dollar.ts";
+import {Franc} from "./franc.ts";
 
 // TODO List
 // [ ] $5 + 10CHF = $10 (when rating is 2:1)
@@ -21,4 +22,10 @@ Deno.test('multiplication',   () => {
 Deno.test('equality', () => {
   assert(new Dollar(5).equals(new Dollar(5)))
   assertFalse(new Dollar(5).equals(new Dollar(6)))
+})
+
+Deno.test('franc multiplication',   () => {
+  const five = new Franc(5);
+  assertEquals(new Franc(10), five.times(2))
+  assertEquals(new Franc(15), five.times(3))
 })
