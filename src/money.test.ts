@@ -1,6 +1,5 @@
 import { assertEquals, assert, assertFalse } from "https://deno.land/std@0.149.0/testing/asserts.ts";
-import {Dollar} from "./dollar.ts";
-import {Franc} from "./franc.ts";
+import { Money } from "./money.ts";
 
 // TODO List
 // [ ] $5 + 10CHF = $10 (when rating is 2:1)
@@ -14,24 +13,25 @@ import {Franc} from "./franc.ts";
 // [ ] To evaluate equality to other objects
 // [x] To generalize equals method
 // [ ] To generalize times method
-// [ ] To compare Franc and Dollar
+// [x] To compare Franc and Dollar
+// [ ] Concept of currency
 
 Deno.test('multiplication',   () => {
-  const five = new Dollar(5);
-  assertEquals(new Dollar(10), five.times(2))
-  assertEquals(new Dollar(15), five.times(3))
+  const five = Money.dollar(5);
+  assertEquals(Money.dollar(10), five.times(2))
+  assertEquals(Money.dollar(15), five.times(3))
 })
 
 Deno.test('equality', () => {
-  assert(new Dollar(5).equals(new Dollar(5)))
-  assertFalse(new Dollar(5).equals(new Dollar(6)))
-  assert(new Franc(5).equals(new Franc(5)))
-  assertFalse(new Franc(5).equals(new Franc(6)))
-  assertFalse(new Franc(5).equals(new Dollar(5)))
+  assert(Money.dollar(5).equals(Money.dollar(5)))
+  assertFalse(Money.dollar(5).equals(Money.dollar(6)))
+  assert(Money.franc(5).equals(Money.franc(5)))
+  assertFalse(Money.franc(5).equals(Money.franc(6)))
+  assertFalse(Money.franc(5).equals(Money.dollar(5)))
 })
 
 Deno.test('franc multiplication',   () => {
-  const five = new Franc(5);
-  assertEquals(new Franc(10), five.times(2))
-  assertEquals(new Franc(15), five.times(3))
+  const five = Money.franc(5);
+  assertEquals(Money.franc(10), five.times(2))
+  assertEquals(Money.franc(15), five.times(3))
 })
