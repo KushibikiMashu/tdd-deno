@@ -1,9 +1,13 @@
-export class Money {
+export class Money implements Expression {
   constructor(protected amount: number, protected currency: string) {
   }
 
   times(multiplier: number): Money {
     return new Money(this.amount * multiplier, this.currency)
+  }
+
+  plus(addend: Money): Expression {
+    return new Money(this.amount + addend.amount, this.currency)
   }
 
   getCurrency(): string {
@@ -12,7 +16,6 @@ export class Money {
 
   equals(object: Money): boolean {
     return this.amount === (object as Money).amount
-      // "object instanceof this" doesn't work so comparing both class names here.
       && object.getCurrency() === this.getCurrency();
   }
 
@@ -22,5 +25,15 @@ export class Money {
 
   static franc(amount: number): Money {
     return new Money(amount, 'CHF')
+  }
+}
+
+export interface Expression {
+
+}
+
+export class Bank {
+  reduce(source:Expression, to: string ): Money {
+    return Money.dollar(10)
   }
 }
