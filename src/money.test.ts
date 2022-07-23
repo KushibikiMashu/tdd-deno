@@ -22,6 +22,8 @@ Deno.test('multiplication',   () => {
 Deno.test('equality', () => {
   assert(new Dollar(5).equals(new Dollar(5)))
   assertFalse(new Dollar(5).equals(new Dollar(6)))
+  assert(new Franc(5).equals(new Franc(5)))
+  assertFalse(new Franc(5).equals(new Franc(6)))
 })
 
 Deno.test('franc multiplication',   () => {
