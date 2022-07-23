@@ -6,7 +6,7 @@ export class Dollar {
     return new Dollar(this.amount * multiplier)
   }
 
-  equals(object: object): boolean {
+  equals(object: Dollar): boolean {
     return this.amount === (object as Dollar).amount;
   }
 }
