@@ -4,7 +4,7 @@ import {Dollar} from "./money.ts";
 // TODO List
 // [ ] $5 + 10CHF = $10 (when rating is 2:1)
 // [x] $5 * 2 = $10
-// [ ] To make amount private
+// [x] To make amount prop private
 // [x] How to deal with a side effect of Dollar?
 // [ ] How to deal with rounding of Money?
 // [x] equals()
@@ -14,10 +14,8 @@ import {Dollar} from "./money.ts";
 
 Deno.test('multiplication',   () => {
   const five = new Dollar(5);
-  let product = five.times(2);
-  assertEquals(10, product.amount)
-  product = five.times(3);
-  assertEquals(15, product.amount)
+  assertEquals(new Dollar(10), five.times(2))
+  assertEquals(new Dollar(15), five.times(3))
 })
 
 Deno.test('equality', () => {
