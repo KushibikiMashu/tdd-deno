@@ -15,6 +15,7 @@ import { Money } from "./money.ts";
 // [ ] To generalize times method
 // [x] To compare Franc and Dollar
 // [ ] Concept of currency
+// [ ] To delete testFrancMultiplication ?
 
 Deno.test('multiplication',   () => {
   const five = Money.dollar(5);
@@ -34,4 +35,9 @@ Deno.test('franc multiplication',   () => {
   const five = Money.franc(5);
   assertEquals(Money.franc(10), five.times(2))
   assertEquals(Money.franc(15), five.times(3))
+})
+
+Deno.test('currency',   () => {
+  assertEquals('USD', Money.dollar(1).getCurrency())
+  assertEquals('CHF', Money.franc(1).getCurrency())
 })
