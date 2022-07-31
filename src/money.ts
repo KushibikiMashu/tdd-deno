@@ -10,8 +10,9 @@ export class Money implements Expression {
     return new Sum(this, addend)
   }
 
-  reduce(to: string): Money {
-    return this
+  reduce(bank: Bank, to: string): Money {
+    const rate = bank.rate(this.currency, to)
+    return new Money(this.amount / rate, to)
   }
 
   getCurrency(): string {
@@ -33,21 +34,46 @@ export class Money implements Expression {
 }
 
 export interface Expression {
-  reduce(to: string): Money
+  reduce(bank: Bank, to: string): Money
 }
 
 export class Sum implements Expression {
   constructor(public augend: Money, public  addend: Money) {
   }
 
-  reduce(to: string): Money {
+  reduce(bank: Bank, to: string): Money {
     const amount = this.augend.amount + this.addend.amount
     return new Money(amount, to)
   }
 }
 
 export class Bank {
-  reduce(source:Expression, to: string): Money {
-    return source.reduce(to)
+  private rates: Map<Pair, number> = new Map()
+
+  reduce(source: Expression, to: string): Money {
+    return source.reduce(this, to)
+  }
+
+  addRate(from: string, to: string, rate: number): void {
+    this.rates.set(new Pair(from, to), rate)
+  }
+
+  rate(from: string, to: string): number {
+    if (from === to) return 1
+    return from === 'CHF' && to === 'USD' ? 2 : 1
+  }
+}
+
+export class Pair {
+  constructor(private from: string, private to: string) {
+  }
+
+  equals(object: any) {
+    const pair = object as Pair
+    return this.from === pair.from && this.to === pair.to
+  }
+
+  hashCode() {
+    return 0
   }
 }

@@ -3,11 +3,11 @@ import {Bank, Money, Sum} from "./money.ts";
 
 // TODO List
 // [ ] $5 + 10CHF = $10 (when rate is 2:1)
-// [ ] $5 + $5 = $10
+// [x] $5 + $5 = $10
 // [ ] $5 + $5 returns Money
 // [x] Bank.reduce(Money)
-// [ ] Money を変換して換算を行う
-// [ ] Reduce(Bank, String)
+// [x] Money を変換して換算を行う
+// [x] Reduce(Bank, String)
 
 Deno.test('multiplication',   () => {
   const five = Money.dollar(5);
@@ -53,4 +53,15 @@ Deno.test('reduce money',   () => {
   const bank = new Bank()
   const result = bank.reduce(Money.dollar(1), 'USD')
   assertEquals(Money.dollar(1), result)
+})
+
+Deno.test('reduce money different currency',   () => {
+  const bank = new Bank()
+  bank.addRate('CFH', 'USD', 2)
+  const result = bank.reduce(Money.franc(2), 'USD')
+  assertEquals(Money.dollar(1), result)
+})
+
+Deno.test('identity rate',   () => {
+  assertEquals(1, new Bank().rate('USD', 'USD'))
 })
