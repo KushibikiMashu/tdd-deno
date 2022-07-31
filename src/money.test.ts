@@ -2,14 +2,13 @@ import { assertEquals, assert, assertFalse } from "https://deno.land/std@0.149.0
 import {Bank, Expression, Money, Sum} from "./money.ts";
 
 // TODO List
-// [ ] $5 + 10CHF = $10 (when rate is 2:1)
+// [x] $5 + 10CHF = $10 (when rate is 2:1)
 // [x] $5 + $5 = $10
-// [ ] $5 + $5 returns Money
 // [x] Bank.reduce(Money)
 // [x] Money を変換して換算を行う
 // [x] Reduce(Bank, String)
-// [ ] Sum.plus
-// [ ] Expression.times
+// [x] Sum.plus
+// [x] Expression.times
 
 Deno.test('multiplication',   () => {
   const five = Money.dollar(5);
@@ -75,4 +74,24 @@ Deno.test('mixed addition',   () => {
   bank.addRate('CHF', 'USD', 2)
   const result = bank.reduce(fiveBucks.plus(tenFrancs), 'USD')
   assertEquals(Money.dollar(10), result)
+})
+
+Deno.test('sum plus money',   () => {
+  const fiveBucks: Expression = Money.dollar(5)
+  const tenFrancs: Expression = Money.franc(10)
+  const bank = new Bank()
+  bank.addRate('CHF', 'USD', 2)
+  const sum = new Sum(fiveBucks, tenFrancs).plus(fiveBucks)
+  const result = bank.reduce(sum, 'USD')
+  assertEquals(Money.dollar(15), result)
+})
+
+Deno.test('sum times',   () => {
+  const fiveBucks: Expression = Money.dollar(5)
+  const tenFrancs: Expression = Money.franc(10)
+  const bank = new Bank()
+  bank.addRate('CHF', 'USD', 2)
+  const sum = new Sum(fiveBucks, tenFrancs).times(2)
+  const result = bank.reduce(sum, 'USD')
+  assertEquals(Money.dollar(20), result)
 })
