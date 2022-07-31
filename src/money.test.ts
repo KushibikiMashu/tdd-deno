@@ -1,5 +1,5 @@
 import { assertEquals, assert, assertFalse } from "https://deno.land/std@0.149.0/testing/asserts.ts";
-import {Bank, Money, Sum} from "./money.ts";
+import {Bank, Expression, Money, Sum} from "./money.ts";
 
 // TODO List
 // [ ] $5 + 10CHF = $10 (when rate is 2:1)
@@ -8,6 +8,8 @@ import {Bank, Money, Sum} from "./money.ts";
 // [x] Bank.reduce(Money)
 // [x] Money を変換して換算を行う
 // [x] Reduce(Bank, String)
+// [ ] Sum.plus
+// [ ] Expression.times
 
 Deno.test('multiplication',   () => {
   const five = Money.dollar(5);
@@ -64,4 +66,13 @@ Deno.test('reduce money different currency',   () => {
 
 Deno.test('identity rate',   () => {
   assertEquals(1, new Bank().rate('USD', 'USD'))
+})
+
+Deno.test('mixed addition',   () => {
+  const fiveBucks: Expression = Money.dollar(5)
+  const tenFrancs: Expression = Money.franc(10)
+  const bank = new Bank()
+  bank.addRate('CHF', 'USD', 2)
+  const result = bank.reduce(fiveBucks.plus(tenFrancs), 'USD')
+  assertEquals(Money.dollar(10), result)
 })
