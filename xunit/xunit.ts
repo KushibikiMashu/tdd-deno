@@ -3,12 +3,12 @@ import { assert } from "https://deno.land/std@0.149.0/testing/asserts.ts";
 // TODO list
 // [x] run test method
 // [x] run setUp first
-// [ ] run tearDown after
+// [x] run tearDown after
 // [ ] run tearDown even if a test failed
 // [ ] run multiple tests
 // [ ] output collected test results
+// [x] log string at WasRun
 
-type Flag = string | number | null;
 type Method = "run" | "testMethod" | "testRunning";
 
 class TestCase {
@@ -25,37 +25,35 @@ class TestCase {
     this.setUp();
     const method = (this as any)[this.name];
     method();
+    this.tearDown();
   };
+
+  tearDown() {
+  }
 }
 
 class WasRun extends TestCase {
+  log: string;
+
   setUp() {
-    this.wasRun = null;
-    this.wasSetUp = 1;
+    this.log = "setUp ";
   }
 
   testMethod = () => {
-    this.wasRun = 1;
+    this.log = this.log + "testMethod ";
   };
+
+  tearDown() {
+    this.log = this.log + "tearDown ";
+  }
 }
 
 class TestCaseTest extends TestCase {
-  private test: WasRun;
-
-  setUp() {
-    this.test = new WasRun("testMethod");
-  }
-
-  testRunning = () => {
-    this.test.run();
-    assert(this.test.wasRun);
-  };
-
   testSetUp = () => {
-    this.test.run();
-    assert(this.test.wasSetUp);
+    const test = new WasRun("testMethod");
+    test.run();
+    assert("setUp testMethod tearDown " === test.log);
   };
 }
 
-new TestCaseTest("testRunning").run();
 new TestCaseTest("testSetUp").run();
