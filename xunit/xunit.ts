@@ -10,14 +10,35 @@ import { assert } from "https://deno.land/std@0.149.0/testing/asserts.ts";
 // [x] log string at WasRun
 // [x] output failed test
 // [ ] catch setUp error to output it
+// [ ] create TestSuite from TestCase
 
 type Method = "run" | "testTemplateMethod" | "testResult" | "testFailedResult";
 
+class TestSuite {
+  tests: WasRun[]
+
+  constructor() {
+    this.tests = []
+  }
+
+  add(test: WasRun) {
+    this.tests = [...this.tests, test]
+  }
+
+  run(result: TestResult) {
+    for (const test of this.tests) {
+      test.run(result)
+    }
+  }
+}
+
 class TestResult {
-  constructor(
-    private runCount: number = 0,
-    private errorCount: number = 0,
-  ) {
+  runCount: number
+  errorCount: number
+
+  constructor() {
+    this.runCount = 0
+    this.errorCount = 0
   }
 
   testStarted() {
@@ -40,8 +61,7 @@ class TestCase {
   setUp() {
   }
 
-  run = () => {
-    const result = new TestResult()
+  run = (result: TestResult) => {
     result.testStarted()
     this.setUp();
 
@@ -52,8 +72,6 @@ class TestCase {
       result.testFailed()
     }
     this.tearDown();
-
-    return result
   };
 
   tearDown() {
@@ -81,39 +99,52 @@ class WasRun extends TestCase {
 }
 
 class TestCaseTest extends TestCase {
-  testTemplateMethod() {
+  private result: TestResult
+
+  setUp() {
+    this.result = new TestResult()
+  }
+
+  testTemplateMethod = () => {
     const test = new WasRun("testMethod");
-    test.run();
+    test.run(this.result);
     assert("setUp testMethod tearDown " === test.log);
   };
 
-  testResult() {
+  testResult = () => {
     const test = new WasRun("testMethod");
-    const result = test.run();
-    assert("1 run, 0 failed" === result.summary());
+    test.run(this.result);
+    assert("1 run, 0 failed" === this.result.summary());
   };
 
-  testFailedResult() {
+  testFailedResult = () => {
     const test = new WasRun("testBrokenMethod");
-    const result = test.run();
-    assert("1 run, 1 failed" === result.summary());
+    test.run(this.result);
+    assert("1 run, 1 failed" === this.result.summary());
   };
 
-  testFailedResultFormatting() {
-    const result = new TestResult()
-    result.testStarted()
-    result.testFailed()
-    assert("1 run, 1 failed" === result.summary());
+  testFailedResultFormatting = () => {
+    this.result.testStarted()
+    this.result.testFailed()
+    assert("1 run, 1 failed" === this.result.summary());
+  }
+
+  testSuite = () => {
+    const suite = new TestSuite()
+    suite.add(new WasRun("testMethod"))
+    suite.add(new WasRun("testBrokenMethod"))
+    suite.run(this.result)
+    assert("2 run, 1 failed" === this.result.summary());
   }
 }
 
-new TestCaseTest("testTemplateMethod").run();
-new TestCaseTest("testResult").run();
-// new TestCaseTest("testFailedResult").run();
-// new TestCaseTest("testFailedResultFormatting").run();
+const suite = new TestSuite()
+suite.add(new TestCaseTest("testTemplateMethod"))
+suite.add(new TestCaseTest("testResult"))
+suite.add(new TestCaseTest("testFailedResult"))
+suite.add(new TestCaseTest("testFailedResultFormatting"))
+suite.add(new TestCaseTest("testSuite"))
 
-console.log(new TestCaseTest("testTemplateMethod").run().summary())
-console.log(new TestCaseTest("testResult").run().summary())
-console.log(new TestCaseTest("testFailedResult").run().summary())
-console.log(new TestCaseTest("testFailedResultFormatting").run().summary())
-
+const result = new TestResult()
+suite.run(result)
+console.log(result.summary());
