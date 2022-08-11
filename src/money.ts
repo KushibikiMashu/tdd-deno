@@ -3,40 +3,40 @@ export class Money implements Expression {
   }
 
   times(multiplier: number): Expression {
-    return new Money(this.amount * multiplier, this.currency)
+    return new Money(this.amount * multiplier, this.currency);
   }
 
   plus(addend: Expression): Expression {
-    return new Sum(this, addend)
+    return new Sum(this, addend);
   }
 
   reduce(bank: Bank, to: string): Money {
-    const rate = bank.rate(this.currency, to)
-    return new Money(this.amount / rate, to)
+    const rate = bank.rate(this.currency, to);
+    return new Money(this.amount / rate, to);
   }
 
   getCurrency(): string {
-    return this.currency
+    return this.currency;
   }
 
   equals(object: Money): boolean {
-    return this.amount === (object as Money).amount
-      && object.getCurrency() === this.getCurrency();
+    return this.amount === (object as Money).amount &&
+      object.getCurrency() === this.getCurrency();
   }
 
   static dollar(amount: number): Money {
-    return new Money(amount,  'USD')
+    return new Money(amount, "USD");
   }
 
   static franc(amount: number): Money {
-    return new Money(amount, 'CHF')
+    return new Money(amount, "CHF");
   }
 }
 
 export interface Expression {
-  times(multiplier: number): Expression
-  plus(addend: Expression): Expression
-  reduce(bank: Bank, to: string): Money
+  times(multiplier: number): Expression;
+  plus(addend: Expression): Expression;
+  reduce(bank: Bank, to: string): Money;
 }
 
 export class Sum implements Expression {
@@ -44,34 +44,37 @@ export class Sum implements Expression {
   }
 
   times(multiplier: number): Expression {
-    return new Sum(this.augend.times(multiplier), this.addend.times(multiplier))
+    return new Sum(
+      this.augend.times(multiplier),
+      this.addend.times(multiplier),
+    );
   }
 
   plus(addend: Expression): Expression {
-    return new Sum(this, addend)
+    return new Sum(this, addend);
   }
 
   reduce(bank: Bank, to: string): Money {
-    const amount = this.augend.reduce(bank, to).amount
-      + this.addend.reduce(bank, to).amount
-    return new Money(amount, to)
+    const amount = this.augend.reduce(bank, to).amount +
+      this.addend.reduce(bank, to).amount;
+    return new Money(amount, to);
   }
 }
 
 export class Bank {
-  private rates: Map<Pair, number> = new Map()
+  private rates: Map<Pair, number> = new Map();
 
   reduce(source: Expression, to: string): Money {
-    return source.reduce(this, to)
+    return source.reduce(this, to);
   }
 
   addRate(from: string, to: string, rate: number): void {
-    this.rates.set(new Pair(from, to), rate)
+    this.rates.set(new Pair(from, to), rate);
   }
 
   rate(from: string, to: string): number {
-    if (from === to) return 1
-    return from === 'CHF' && to === 'USD' ? 2 : 1
+    if (from === to) return 1;
+    return from === "CHF" && to === "USD" ? 2 : 1;
   }
 }
 
@@ -80,11 +83,11 @@ export class Pair {
   }
 
   equals(object: any) {
-    const pair = object as Pair
-    return this.from === pair.from && this.to === pair.to
+    const pair = object as Pair;
+    return this.from === pair.from && this.to === pair.to;
   }
 
   hashCode() {
-    return 0
+    return 0;
   }
 }
