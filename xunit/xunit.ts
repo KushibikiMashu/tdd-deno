@@ -2,7 +2,7 @@ import { assert } from "https://deno.land/std@0.149.0/testing/asserts.ts";
 
 // TODO list
 // [x] run test method
-// [ ] run setUp first
+// [x] run setUp first
 // [ ] run tearDown after
 // [ ] run tearDown even if a test failed
 // [ ] run multiple tests
@@ -18,18 +18,20 @@ class TestCase {
     this.name = name;
   }
 
+  setUp() {
+  }
+
   run = () => {
+    this.setUp();
     const method = (this as any)[this.name];
     method();
   };
 }
 
 class WasRun extends TestCase {
-  wasRun: Flag;
-
-  constructor(name: Method) {
-    super(name);
+  setUp() {
     this.wasRun = null;
+    this.wasSetUp = 1;
   }
 
   testMethod = () => {
@@ -38,12 +40,22 @@ class WasRun extends TestCase {
 }
 
 class TestCaseTest extends TestCase {
-  testRunning() {
-    const test = new WasRun("testMethod");
-    assert(!test.wasRun);
-    test.run();
-    assert(test.wasRun);
+  private test: WasRun;
+
+  setUp() {
+    this.test = new WasRun("testMethod");
   }
+
+  testRunning = () => {
+    this.test.run();
+    assert(this.test.wasRun);
+  };
+
+  testSetUp = () => {
+    this.test.run();
+    assert(this.test.wasSetUp);
+  };
 }
 
 new TestCaseTest("testRunning").run();
+new TestCaseTest("testSetUp").run();
