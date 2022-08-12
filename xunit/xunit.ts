@@ -31,12 +31,10 @@ class TestSuite {
 }
 
 class TestResult {
-  runCount: number;
-  errorCount: number;
-
-  constructor() {
-    this.runCount = 0;
-    this.errorCount = 0;
+  constructor(
+    private runCount: number = 0,
+    private errorCount: number = 0,
+  ) {
   }
 
   testStarted() {
