@@ -12,8 +12,6 @@ import { assert } from "https://deno.land/std@0.149.0/testing/asserts.ts";
 // [ ] catch setUp error to output it
 // [ ] create TestSuite from TestCase
 
-type Method = "run" | "testTemplateMethod" | "testResult" | "testFailedResult";
-
 class TestSuite {
   tests: WasRun[];
 
@@ -55,7 +53,7 @@ class TestResult {
 }
 
 class TestCase {
-  constructor(private name: Method) {
+  constructor(private name: string) {
   }
 
   setUp() {
@@ -66,7 +64,7 @@ class TestCase {
     this.setUp();
 
     try {
-      const method = (this as any)[this.name];
+      const method = this[this.name];
       method();
     } catch (_e) {
       result.testFailed();

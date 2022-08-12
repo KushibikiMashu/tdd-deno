@@ -82,7 +82,7 @@ export class Pair {
   constructor(private from: string, private to: string) {
   }
 
-  equals(object: any) {
+  equals(object: unknown) {
     const pair = object as Pair;
     return this.from === pair.from && this.to === pair.to;
   }
